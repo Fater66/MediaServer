@@ -79,7 +79,7 @@ int main(int argc,char* argv[])
 				std::cout<<"listen event" << std::endl;
 				socklen_t addr_len = sizeof(struct sockaddr);
 				accept_fd = accept(socket_fd,(struct sockaddr *)&remoteaddr,&addr_len);
-				//ï¿½set nonblock mode
+				//èset nonblock mode
 				flags = fcntl(accept_fd,F_GETFL,0);
 				fcntl(accept_fd,F_SETFL,flags|O_NONBLOCK);
 				ev.events = EPOLLIN|EPOLLET;

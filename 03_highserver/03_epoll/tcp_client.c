@@ -39,8 +39,8 @@ int main()
   serverAddr.sin_port = htons(SERVER_PORT);
 
   //inet_addr()函数，将点分十进制IP转换成网络字节序IP
-  serverAddr.sin_addr.s_addr = inet_addr("39.105.185.198");
-  //serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
+ // serverAddr.sin_addr.s_addr = inet_addr("39.105.185.198");
+  serverAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
   if(connect(socket_fd, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0)
   {

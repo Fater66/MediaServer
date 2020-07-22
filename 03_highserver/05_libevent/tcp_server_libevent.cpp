@@ -6,6 +6,11 @@
 
 #include <arpa/inet.h>
 
+#include <string.h>
+#include <stdlib.h>
+#include <stdio.h>
+#include <errno.h>
+
 #define PORT 8111
 
 void on_read_cb(struct bufferevent *bev, void *ctx)
@@ -18,10 +23,10 @@ void on_read_cb(struct bufferevent *bev, void *ctx)
 }
 
 //回调函数
-void on_accept_cb(struct evconnlistener *listener,
+static void on_accept_cb(struct evconnlistener *listener,
                   evutil_socket_t fd,
                   struct sockaddr *addr,
-                  int socklen)
+                  int socklen,void *ctx)
 {
     struct event_base *base = NULL;
     struct bufferevent *bev = NULL;
@@ -37,12 +42,20 @@ int main(int argc, char *argv[])
     struct event_base *base = NULL;
     struct sockaddr_in serveraddr;
     // struct evconnlistener *listener = NULL;
-    struct evconnlistener *listener;
+    struct evconnlistener *listener = NULL;
     //分配并且返回一个新的具有默认设置的 event_base。
     //函数会检测环境变量,返回一个到 event_base 的指针。
     //如果发生错误,则返回 NULL。
     base = event_base_new();
 
+    if (!base) {
+        std::cout<<"Couldn't open event base"<<std::endl;
+        return 1;
+    }else
+    {
+        std::cout<<"base success"<<std::endl;
+    }
+    
     serveraddr.sin_family = AF_INET;
     serveraddr.sin_port = htons(PORT);
     serveraddr.sin_addr.s_addr = INADDR_ANY;
@@ -50,6 +63,15 @@ int main(int argc, char *argv[])
     // listener = evconnlistener_new_bind(base, on_accept_cb, NULL, LEV_OPT_CLOSE_ON_FREE|LEV_OPT_REUSEABLE, -1,(struct sockaddr*)&serveraddr, sizeof(serveraddr));
     listener = evconnlistener_new_bind(base, on_accept_cb, NULL, LEV_OPT_REUSEABLE, 10, (struct sockaddr*)&serveraddr, sizeof(serveraddr));
 
+    if (!listener) {
+        std::cout<<"Couldn't create listener"<<std::endl;
+        return 1;
+    }
+    else
+    {
+        std::cout<<"create listener successfully"<<std::endl;
+    }
+    
     event_base_dispatch(base);
     return 0;
 }
